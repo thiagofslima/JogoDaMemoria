@@ -29,6 +29,8 @@ namespace JogoDaMemoria
             "!", "!", "N", "N", ",", ",", "k", "k",
             "b", "b", "v", "v", "w", "w", "z", "z"
         };
+        Label primeiroClick = null;
+        Label segundoClick = null;
         /// <summary>
         /// Atribui cada ícone da lista de ícones a um quadrado aleatório
         /// </summary>
@@ -57,6 +59,12 @@ namespace JogoDaMemoria
         /// <param name="e"></param>
         private void label1_Click(object sender, EventArgs e)
         {
+            // O cronômetro é ativado apenas após dois não correspondentes
+            // ícones foram mostrados ao jogador,
+            // então ignore qualquer clique se o cronômetro estiver em execução
+            if (timer1.Enabled == true)
+                return;
+
             Label clickLabel = sender as Label;
 
             if(clickLabel != null)
@@ -67,8 +75,51 @@ namespace JogoDaMemoria
                 if (clickLabel.ForeColor == Color.Black)
                     return;
 
-                clickLabel.ForeColor = Color.Black;
+                // Se primeiroClick for null, este é o primeiro ícone
+                // no par que o jogador clicou,
+                // então defina primeiroClick para o rótulo que o jogador
+                // clicado, muda sua cor para preto e retorna
+                if (primeiroClick == null)
+                {
+                    primeiroClick = clickLabel;
+                    primeiroClick.ForeColor = Color.Black;
+
+                    return;
+                }
+
+                // Se o jogador chegar até aqui, o cronômetro não está
+                // correndo e firstClicked não é nulo,
+                // então este deve ser o segundo ícone que o jogador clicou
+                // Define sua cor para preto
+                segundoClick = clickLabel;
+                segundoClick.ForeColor = Color.Black;
+
+                // Se o jogador chegar até aqui, o jogador
+                // clicou em dois ícones diferentes, então inicie o
+                // timer (que vai esperar três quartos de
+                // um segundo e, em seguida, ocultar os ícones)
+                timer1.Start();
+
             }
+        }
+        /// <summary>
+        /// Este cronômetro é iniciado quando o jogador clica
+        /// dois ícones que não combinam,
+        /// então conta três quartos de segundo
+        /// e depois se desliga e oculta os dois ícones
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            timer1.Stop();
+
+            primeiroClick.ForeColor = primeiroClick.BackColor;
+            segundoClick.ForeColor = segundoClick.BackColor;
+
+            // Reseta o primeiro e segundo click
+            primeiroClick = null;
+            segundoClick = null;
         }
     }
 }
