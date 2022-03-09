@@ -94,6 +94,19 @@ namespace JogoDaMemoria
                 segundoClick = clickLabel;
                 segundoClick.ForeColor = Color.Black;
 
+                //Verifica se o jogador ganhou
+                VerificaSeGanhou();
+
+                // Se o jogador clicou em dois ícones correspondentes, mantenha-os
+                // preto e redefinir primeiroClock e segundoClick
+                // para que o jogador possa clicar em outro ícone
+                if(primeiroClick.Text == segundoClick.Text)
+                {
+                    primeiroClick = null;
+                    segundoClick = null;
+                    return;
+                }
+
                 // Se o jogador chegar até aqui, o jogador
                 // clicou em dois ícones diferentes, então inicie o
                 // timer (que vai esperar três quartos de
@@ -120,6 +133,29 @@ namespace JogoDaMemoria
             // Reseta o primeiro e segundo click
             primeiroClick = null;
             segundoClick = null;
+        }
+        /// <summary>
+        /// Verifica cada ícone para ver se ele corresponde, por
+        /// comparando sua cor de primeiro plano com sua cor de fundo.
+        /// Se todos os ícones corresponderem, o jogador ganha
+        /// </summary>
+        private void VerificaSeGanhou()
+        {
+            // Passa por todos os rótulos no TableLayoutPanel,
+            // verificando cada um para ver se seu ícone corresponde
+            foreach (Control control in tableLayoutPanel1.Controls)
+            {
+                Label iconeLabel = control as Label;
+
+                if(iconeLabel != null)
+                {
+                    if (iconeLabel.ForeColor == iconeLabel.BackColor)
+                        return;
+                }
+            }
+
+            MessageBox.Show("Você acertou todos os ícones!", "Parabéns!");
+            Close();
         }
     }
 }
